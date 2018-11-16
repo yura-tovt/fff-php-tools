@@ -1,0 +1,13 @@
+path: ./
+jobs: 10
+extensions:
+  - php
+exclude:
+  - vendor
+  - config
+  - mail
+  - runtime
+  - vagrant
+  - views
+  - tests
+  - widgets

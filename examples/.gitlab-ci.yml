@@ -1,0 +1,33 @@
+image: piratto/fff-php-tools:0.5
+
+stages:
+  - test
+  - deploy
+
+run_phplint:
+  stage: test
+  script:
+    - phplint
+  tags:
+    - ci-test
+
+run_phpcs:
+  stage: test
+  script:
+    - php-cs-fixer fix --dry-run --diff
+  allow_failure: true
+  tags:
+    - ci-test
+
+deploy_dev:
+  stage: deploy
+  script:
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - mkdir -p ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - envoy run deploy --env=dev
+  tags:
+    - ci-test
+  only:
+    - ci-setup
